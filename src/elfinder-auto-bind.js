@@ -58,23 +58,80 @@ function updateImageList(inputId) {
   if (!input || !imageList) return;
   imageList.innerHTML = ""; // Xóa danh sách hình ảnh hiện tại
 
-  if (input.tagName.toLowerCase() == "textarea") {
-    var urls = input.value.split("\n");
-    urls.forEach(function (url) {
-      var img = document.createElement("img");
-      img.src = url;
-      img.style.width = "100px";
-      imageList.appendChild(img);
-    });
-  } else {
-    var url = input.value;
+  var urls = input.value.split("\n"); // Luôn chuyển input thành mảng URL
+  urls.forEach(function (url) {
     if (url) {
-      var img = document.createElement("img");
-      img.src = url;
-      img.style.width = "100px";
-      imageList.appendChild(img);
+      var div = document.createElement("div"); // Tạo một div bao quanh ảnh và các nút
+      div.style.backgroundColor = `black`;
+      div.style.backgroundImage = `url(${url})`;
+      div.style.backgroundSize = "cover";
+      div.style.backgroundPosition = "center";
+      div.style.width = "100px";
+      div.style.height = "100px";
+      div.style.display = "inline-flex";
+      div.style.justifyContent = "center";
+      div.style.alignItems = "center";
+      div.style.cursor = "pointer";
+      div.style.overflow = "hidden";
+
+      // Để ẩn hiện nút khi hover
+      div.style.flexDirection = "column"; // Đặt nút theo cột (vertical)
+      div.onmouseover = function () {
+        openButton.style.opacity = "1";
+        deleteButton.style.opacity = "1";
+      };
+
+      div.onmouseleave = function () {
+        openButton.style.opacity = "0";
+        deleteButton.style.opacity = "0";
+      };
+
+      // Tạo nút mở ảnh trong tab mới
+      var openButton = document.createElement("button");
+      openButton.innerText = "Open";
+      openButton.type = "button";
+      openButton.style.opacity = "0"; // Ẩn nút khi không hover
+      openButton.style.transition = "opacity 0.3s";
+      openButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+      openButton.style.color = "white";
+      openButton.style.border = "none";
+      openButton.style.padding = "5px 10px";
+      openButton.style.margin = "5px";
+      openButton.style.cursor = "pointer";
+
+      openButton.onclick = function () {
+        window.open(url, "_blank");
+      };
+
+      // Tạo nút xóa ảnh
+      var deleteButton = document.createElement("button");
+      deleteButton.innerText = "Delete";
+      openButton.type = "button";
+      deleteButton.style.opacity = "0"; // Ẩn nút khi không hover
+      deleteButton.style.transition = "opacity 0.3s";
+      deleteButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+      deleteButton.style.color = "white";
+      deleteButton.style.border = "none";
+      deleteButton.style.padding = "5px 10px";
+      deleteButton.style.margin = "5px";
+      deleteButton.style.cursor = "pointer";
+
+      deleteButton.onclick = function () {
+        div.remove(); // Xóa div chứa ảnh và các nút
+
+        // Xóa URL khỏi input
+        var updatedUrls = input.value.split("\n").filter(function (item) {
+          return item !== url;
+        });
+        input.value = updatedUrls.join("\n"); // Cập nhật lại giá trị của input
+      };
+
+      // Thêm nút vào div
+      div.appendChild(openButton);
+      div.appendChild(deleteButton);
+      imageList.appendChild(div);
     }
-  }
+  });
 }
 
 // Hàm tạo nút upload và div hiển thị hình ảnh
