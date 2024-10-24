@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example of CKEditor and elFinder Integration</title>
+
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"
+    />
+    <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.min.js"></script>
+    <!-- Bootstrap JS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <!-- elFinder -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/elfinder/2.1.65/css/elfinder.full.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/elfinder/2.1.65/css/theme.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elfinder/2.1.65/js/elfinder.full.min.js"></script>
+    <script src="../dist/elfinder-auto-bind.min.js"></script>
+    <!-- CKEditor -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.ckeditor.com/ckeditor5/43.0.0/ckeditor5.css"
+    />
+    <script type="module" src="../dist/ckeditor-configs.min.js"></script>
+    <script src="../dist/ckeditor-elfinder-integration.min.js"></script>
+    <script src="../dist/ckeditor-auto-bind.min.js"></script>
+  </head>
+  <body>
+    <h1>Example: CKEditor and elFinder Integration</h1>
+    <input id="image" class="upload" />
+    <textarea id="images" class="upload"></textarea>
+    <textarea id="ckeditor" class="ckeditor"></textarea>
+    <script>
+      // Thay đổi hash của thư mục elfinder (bằng việc gán lại biến sau khi DOMLoaded)
+      // để chỉ định thư mục đích cho việc upload hình ảnh trong CKEditor 5, undefined sẽ tải lên ở root
+      window.uploadTargetHash = undefined;
+      // Chuỗi kết nối của elfinder với backend
+      window.connectorUrl = "/el-finder/file-system/connector";
+
+      // Khởi tạo CKEditor cho các textarea.ckeditor khi trang tải xong
+      document.addEventListener("DOMContentLoaded", handleCKEditorChanges);
+
+      // Khởi tạo elFinder cho các input.upload và textarea.upload khi trang tải xong
+      document.addEventListener("DOMContentLoaded", setupElFinders);
+
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   initElFinder(document.getElementById("image"))
+      //     .getUI()
+      //     .dialogelfinder("open");
+      //   initElFinder(document.getElementById("images"))
+      //     .getUI()
+      //     .dialogelfinder("open");
+
+      //   initializeEditor(document.getElementById("ckeditor"));
+      // });
+    </script>
+  </body>
+</html>

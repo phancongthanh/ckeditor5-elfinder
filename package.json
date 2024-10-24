@@ -1,0 +1,23 @@
+{
+  "name": "ckeditor5-elfinder",
+  "version": "1.0.0",
+  "description": "Set of libraries to integrate ckeditor5 and elfinder into the website",
+  "main": "webpack.config.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "glob": "^11.0.0",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "ckeditor5": "^43.2.0"
+  }
+}
