@@ -11,7 +11,7 @@
     "build": "webpack"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "glob": "^11.0.0",
     "webpack": "^5.95.0",
