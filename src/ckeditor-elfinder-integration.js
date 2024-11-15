@@ -161,7 +161,7 @@ function integrateWithElFinder(editor) {
       ) {
         file = await file;
       }
-      await upload(file); // Thực hiện upload
+      return await upload(file); // Thực hiện upload
     };
     this.abort = function () {
       _fm && _fm.getUI().trigger("uploadabort"); // Hủy upload nếu cần
