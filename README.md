@@ -13,6 +13,7 @@ This project demonstrates the integration of CKEditor 5 with elFinder, allowing 
 ## Overview
 
 This integration utilizes CKEditor 5 as a rich text editor and elFinder as a file manager for uploading images. This example showcases how to set up both libraries to work seamlessly together.
+The project is referenced and developed from [Integration-with-CKEditor-5](https://github.com/Studio-42/elFinder/wiki/Integration-with-CKEditor-5)
 
 ## Getting Started
 
