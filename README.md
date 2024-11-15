@@ -24,11 +24,14 @@ To use this project, download the files from the `dist` directory and link them 
 
 ```html
 <!-- elFinder -->
-<script src="../dist/elfinder-auto-bind.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/elfinder-auto-bind.min.js"></script>
 <!-- CKEditor -->
-<script src="../dist/ckeditor-configs.min.js" type="module"></script>
-<script src="../dist/ckeditor-elfinder-integration.min.js"></script>
-<script src="../dist/ckeditor-auto-bind.min.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-configs.min.js"
+  type="module"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-elfinder-integration.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-auto-bind.min.js"></script>
 ```
 
 ## Libraries Used

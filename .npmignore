@@ -1,0 +1,10 @@
+# Bỏ qua tất cả các file và thư mục
+*
+
+# Cho phép thư mục dist và examples, bao gồm cả các file con bên trong
+!dist/**
+!examples/**
+
+# Nếu bạn muốn bao gồm các file ở thư mục root như README.md hoặc LICENSE, thêm chúng vào
+!README.md
+!LICENSE
