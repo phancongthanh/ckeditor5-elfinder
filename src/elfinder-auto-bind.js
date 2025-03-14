@@ -64,7 +64,9 @@ function initElFinder(input) {
         // Nếu cho phép chọn nhiều file
         let existingFiles = input.value ? input.value.split("\n") : [];
         file.forEach((f) => {
-          const url = configs.fullFilePath ? fm.convAbsUrl(f.url) : f.path;
+          const url = configs.fullFilePath
+            ? fm.convAbsUrl(f.url)
+            : new URL(f.url).pathname;
           if (!existingFiles.includes(url)) existingFiles.push(url);
         });
         input.value = existingFiles.join("\n");
@@ -72,7 +74,7 @@ function initElFinder(input) {
         // Nếu chỉ chọn một file
         input.value = configs.fullFilePath
           ? fm.convAbsUrl(file.url)
-          : file.path;
+          : new URL(file.url).pathname;
       }
 
       // Gọi hàm cập nhật hình ảnh

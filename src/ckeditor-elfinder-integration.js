@@ -63,7 +63,9 @@ function integrateWithElFinder(editor) {
             let imgs = [];
             fm.getUI("cwd").trigger("unselectall"); // Bỏ chọn tất cả các file
             files.forEach((f) => {
-              let url = configs.fullFilePath ? fm.convAbsUrl(f.url) : f.path;
+              let url = configs.fullFilePath
+                ? fm.convAbsUrl(f.url)
+                : new URL(f.url).pathname;
               if (f && f.mime.match(/^image\//i)) {
                 imgs.push(url); // Thêm URL hình ảnh vào danh sách
               } else {
