@@ -1,4 +1,44 @@
-﻿// Hàm khởi tạo elFinder
+﻿const elfinderConfigs = {
+  uploadTargetHash: undefined,
+  fullFilePath: false,
+  modal: true,
+  title: "File Manager",
+  useBrowserHistory: false, // Không sử dụng lịch sử trình duyệt
+  autoOpen: false, // Không tự động mở
+  width: "80%", // Độ rộng của elFinder
+  url: "/el-finder/file-system/connector",
+  autoOpen: false,
+  height: 600,
+  commandsOptions: {
+    getfile: {
+      oncomplete: "close", // Đóng elFinder sau khi chọn file
+    },
+  },
+};
+
+// Hàm merge để kết hợp cấu hình
+function mergeConfig(globalConfig, instanceConfig) {
+  const result = { ...globalConfig }; // Sao chép cấu hình global
+
+  for (let key in instanceConfig) {
+    if (instanceConfig.hasOwnProperty(key)) {
+      if (
+        typeof instanceConfig[key] === "object" &&
+        !Array.isArray(instanceConfig[key]) &&
+        instanceConfig[key] !== null
+      ) {
+        // Nếu là object, đệ quy merge
+        result[key] = mergeConfig(globalConfig[key] || {}, instanceConfig[key]);
+      } else {
+        // Nếu không, ưu tiên giá trị từ instance
+        result[key] = instanceConfig[key];
+      }
+    }
+  }
+
+  return result;
+}
+// Hàm khởi tạo elFinder
 function initElFinder(input) {
   if (!input.id) input.id = "elfinder_" + Math.random(); // Tạo id duy nhất
 
@@ -12,41 +52,36 @@ function initElFinder(input) {
   }
   elfinder.style.display = "block";
 
-  // Khởi tạo elFinder
-  let fm = $(elfinder)
-    .dialogelfinder({
-      modal: true,
-      title: "File Manager",
-      url: window.connectorUrl || "/el-finder/file-system/connector",
-      autoOpen: false,
-      height: 600,
-      commandsOptions: {
-        getfile: {
-          oncomplete: "close", // Đóng elFinder sau khi chọn file
-          multiple: multiple, // Cho phép chọn nhiều file
-        },
+  var configs = mergeConfig(window.elfinderConfigs || {}, {
+    commandsOptions: {
+      getfile: {
+        multiple: multiple, // Cho phép chọn nhiều file
       },
-      getFileCallback: function (file, fm) {
-        // Cập nhật giá trị của input
-        if (multiple) {
-          // Nếu trường input cho phép chọn nhiều file
-          var existingFiles = input.value ? input.value.split("\n") : [];
-          file.forEach((f) => {
-            let url = fm.convAbsUrl(f.url);
-            if (!existingFiles.includes(url)) existingFiles.push(url);
-          });
-          input.value = existingFiles.join("\n");
-        } else {
-          // Nếu chỉ chọn một file
-          let url = fm.convAbsUrl(file.url);
-          input.value = url;
-        }
+    },
+    getFileCallback: function (file, fm) {
+      // Cập nhật giá trị của input
+      if (multiple) {
+        // Nếu cho phép chọn nhiều file
+        let existingFiles = input.value ? input.value.split("\n") : [];
+        file.forEach((f) => {
+          const url = configs.fullFilePath ? fm.convAbsUrl(f.url) : f.path;
+          if (!existingFiles.includes(url)) existingFiles.push(url);
+        });
+        input.value = existingFiles.join("\n");
+      } else {
+        // Nếu chỉ chọn một file
+        input.value = configs.fullFilePath
+          ? fm.convAbsUrl(file.url)
+          : file.path;
+      }
 
-        // Gọi hàm cập nhật hình ảnh
-        updateImageList(input.id);
-      },
-    })
-    .elfinder("instance");
+      // Gọi hàm cập nhật hình ảnh
+      updateImageList(input.id);
+    },
+  });
+
+  // Khởi tạo elFinder
+  let fm = $(elfinder).dialogelfinder(configs).elfinder("instance");
 
   return fm;
 }
@@ -160,6 +195,8 @@ function createUploadElements(input) {
 
     // Gán sự kiện click cho nút upload
     button.addEventListener("click", function () {
+      // Reload elFinder để cập nhật danh sách file
+      fm.exec("reload");
       // Mở elFinder dialog
       let fmNode = fm.getUI();
       fmNode.dialogelfinder("open");
@@ -194,6 +231,7 @@ function autoSetupElFinders() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+window.elfinderConfigs = elfinderConfigs;
 window.initElFinder = initElFinder;
 window.createUploadElements = createUploadElements;
 window.setupElFinders = setupElFinders;

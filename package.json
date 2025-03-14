@@ -1,6 +1,6 @@
 {
   "name": "ckeditor5-elfinder",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Set of libraries to integrate ckeditor5 and elfinder into the website",
   "main": "webpack.config.js",
   "directories": {

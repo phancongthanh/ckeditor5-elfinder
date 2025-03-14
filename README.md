@@ -24,14 +24,14 @@ To use this project, download the files from the `dist` directory and link them 
 
 ```html
 <!-- elFinder -->
-<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/elfinder-auto-bind.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.1.0/dist/elfinder-auto-bind.min.js"></script>
 <!-- CKEditor -->
 <script
-  src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-configs.min.js"
+  src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.1.0/dist/ckeditor-configs.min.js"
   type="module"
 ></script>
-<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-elfinder-integration.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.0.4/dist/ckeditor-auto-bind.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.1.0/dist/ckeditor-elfinder-integration.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ckeditor5-elfinder@1.1.0/dist/ckeditor-auto-bind.min.js"></script>
 ```
 
 ## Libraries Used
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 ```
 
-You need to ensure that the `connectorUrl` points to your elFinder backend for handling file uploads.
+You need to ensure that the `window.elfinderConfigs.url` points to your elFinder backend for handling file uploads.
 
 ## License
 

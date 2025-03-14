@@ -1,4 +1,27 @@
-﻿// Tích hợp CKEditor với elFinder
+﻿// Hàm merge để kết hợp cấu hình
+function mergeConfig(globalConfig, instanceConfig) {
+  const result = { ...globalConfig }; // Sao chép cấu hình global
+
+  for (let key in instanceConfig) {
+    if (instanceConfig.hasOwnProperty(key)) {
+      if (
+        typeof instanceConfig[key] === "object" &&
+        !Array.isArray(instanceConfig[key]) &&
+        instanceConfig[key] !== null
+      ) {
+        // Nếu là object, đệ quy merge
+        result[key] = mergeConfig(globalConfig[key] || {}, instanceConfig[key]);
+      } else {
+        // Nếu không, ưu tiên giá trị từ instance
+        result[key] = instanceConfig[key];
+      }
+    }
+  }
+
+  return result;
+}
+
+// Tích hợp CKEditor với elFinder
 function integrateWithElFinder(editor) {
   // Lấy các plugin và lệnh cần thiết từ CKEditor
   const ckf = editor.commands.get("ckfinder"); // Lệnh ckfinder
@@ -29,38 +52,31 @@ function integrateWithElFinder(editor) {
         let container = document.createElement("div"); // Tạo phần tử div để chứa elFinder
         document.body.appendChild(container); // Thêm phần tử div vào body
 
-        _fm = $(container)
-          .dialogelfinder({
-            modal: true,
-            title: "File Manager",
-            url: window.connectorUrl || "/el-finder/file-system/connector", // URL của elFinder connector
-            startPathHash: open || void 0, // Thư mục bắt đầu
-            useBrowserHistory: false, // Không sử dụng lịch sử trình duyệt
-            autoOpen: false, // Không tự động mở
-            width: "80%", // Độ rộng của elFinder
-            commandsOptions: {
-              getfile: {
-                oncomplete: "close", // Đóng elFinder sau khi chọn file
-                multiple: true, // Cho phép chọn nhiều file
-              },
+        let configs = mergeConfig(window.elfinderConfigs || {}, {
+          startPathHash: open || void 0, // Thư mục bắt đầu
+          commandsOptions: {
+            getfile: {
+              multiple: true, // Cho phép chọn nhiều file
             },
-            getFileCallback: (files, fm) => {
-              let imgs = [];
-              fm.getUI("cwd").trigger("unselectall"); // Bỏ chọn tất cả các file
-              files.forEach((f) => {
-                let url = fm.convAbsUrl(f.url);
-                if (f && f.mime.match(/^image\//i)) {
-                  imgs.push(url); // Thêm URL hình ảnh vào danh sách
-                } else {
-                  editor.execute("link", url); // Thêm link cho các file không phải hình ảnh
-                }
-              });
-              if (imgs.length) {
-                insertImages(imgs); // Chèn hình ảnh vào CKEditor
+          },
+          getFileCallback: (files, fm) => {
+            let imgs = [];
+            fm.getUI("cwd").trigger("unselectall"); // Bỏ chọn tất cả các file
+            files.forEach((f) => {
+              let url = configs.fullFilePath ? fm.convAbsUrl(f.url) : f.path;
+              if (f && f.mime.match(/^image\//i)) {
+                imgs.push(url); // Thêm URL hình ảnh vào danh sách
+              } else {
+                editor.execute("link", url); // Thêm link cho các file không phải hình ảnh
               }
-            },
-          })
-          .elfinder("instance");
+            });
+            if (imgs.length) {
+              insertImages(imgs); // Chèn hình ảnh vào CKEditor
+            }
+          },
+        });
+
+        _fm = $(container).dialogelfinder(configs).elfinder("instance");
       }
       if (!open) resolve(_fm);
       else {
@@ -105,6 +121,7 @@ function integrateWithElFinder(editor) {
   if (ckf) {
     ckf.execute = () => {
       getfm().then((fm) => {
+        fm.exec("reload"); // Reload elFinder để cập nhật danh sách file
         fm.getUI().dialogelfinder("open"); // Mở elFinder
       });
     };
@@ -121,12 +138,12 @@ function integrateWithElFinder(editor) {
   const uploader = function (loader) {
     const upload = async function (file) {
       try {
-        const fm = await getfm(window.uploadTargetHash);
+        const fm = await getfm(window.elfinderConfigs.uploadTargetHash);
         const fmNode = fm.getUI();
         fmNode.dialogelfinder("open"); // Mở elFinder để chọn file
         // Đợi elFinder mở hoàn toàn
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        const target = window.uploadTargetHash || fm.cwd().hash;
+        const target = window.elfinderConfigs.uploadTargetHash || fm.cwd().hash;
         const data = await fm.exec(
           "upload",
           { files: [file], target },
@@ -138,7 +155,9 @@ function integrateWithElFinder(editor) {
             const url = await fm.url(data.added[0].hash, { async: true });
             fmNode.dialogelfinder("close"); // Đóng elFinder sau khi upload xong
             return {
-              default: fm.convAbsUrl(url), // Trả về URL của file vừa upload
+              default: window.elfinderConfigs.fullFilePath
+                ? fm.convAbsUrl(url)
+                : new URL(url).pathname, // Trả về URL của file vừa upload
             };
           } catch (error) {
             fmNode.dialogelfinder("close");
